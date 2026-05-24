@@ -1,12 +1,18 @@
 package com.mytech.mesapi.service;
 
+import com.mytech.mesapi.entity.ManufacturingResult;
 import com.mytech.mesapi.kafka.dto.ManufacturingResultEvent;
+import com.mytech.mesapi.repository.ManufacturingResultRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ManufacturingResultService {
+
+    private final ManufacturingResultRepository manufacturingResultRepository;
 
     public void handle(ManufacturingResultEvent event) {
         if (event == null) {
@@ -21,6 +27,7 @@ public class ManufacturingResultService {
                 event.getStationId(),
                 event.getOverallResult());
 
-        // TODO: persist to manufacturing_result when JPA layer is enabled
+        ManufacturingResult saved = manufacturingResultRepository.save(ManufacturingResult.fromEvent(event));
+        log.info("Saved manufacturing result id={}", saved.getId());
     }
 }
